@@ -21,25 +21,28 @@ type
 
 var
   progressiveKeyStepShift : byte;
+  progressiveKey : boolean;
+  statisticTable : PTStatisticTable;
 
-function stringsAreEqual(var encipheredText : string; const i, j, SUBSTRING_LENGTH : integer) : boolean; forward;
+function stringsAreEqual(const encipheredText : string; const i, j : integer) : boolean; overload; forward;
+function stringsAreEqual(trigram1, trigram2 : string) : boolean; overload; forward;
 function greatestCommonDivisor(a, b : integer) : integer; inline; forward;
-function greatestCommonDisvisionExists(const savedDistance, distance : integer) : boolean; forward; inline;
-procedure compareDistances(item : PTStatisticTable; const  savedDistance, distance : integer); inline; forward;
-procedure addItemToAnalizeTable(var analizeTable : PTStatisticTable; const trigram : string[3];
-                                const numberOfOccurences : integer; const distance : integer); forward;
+function greatestCommonDisvisionExists(const savedDistance, distance : integer) : boolean; inline; forward;
+procedure compareDistances(item : PTStatisticTable; const distance : integer); inline; forward;
+procedure addItemToAnalizeTable(const analizeTable : PTStatisticTable; const trigram : string;
+                                const distance : integer); forward;
+procedure setProgressiveKeyStepShift(const keyStepShift : byte); inline; forward;
 
-function createAnalizeTable : PTStatisticTable;
-var
-  analizeTable : PTStatisticTable;
+
+function createStatisticTable : PTStatisticTable;
 begin
-  new(analizeTable);
-  analizeTable^.next := nil;
+  new(statisticTable);
+  statisticTable^.next := nil;
 
-  Result := analizeTable;
+  Result := statisticTable;
 end;
 
-procedure addItemToAnalizeTable(const analizeTable : PTStatisticTable; const trigram : string[3];
+procedure addItemToAnalizeTable(const analizeTable : PTStatisticTable; const trigram : string;
                                 const distance : integer);
 begin
   new(analizeTable^.next);
@@ -48,12 +51,12 @@ begin
   analizeTable^.next^.next := nil;
 end;
 
-procedure saveSubstringToAnalizeTable(analizeTable : PTStatisticTable; const trigram : string[SUBSTRING_LENGTH];
+procedure saveSubstringToAnalizeTable(analizeTable : PTStatisticTable; const trigram : string;
                                       const distance : integer);
 var
   equal : boolean;
 begin
-  equal := false;    
+  equal := false;
   
   while ((analizeTable^.next <> nil) and not equal) do
   begin
@@ -66,37 +69,37 @@ begin
   end;
 
   if equal and greatestCommonDisvisionExists(analizeTable^.distance, distance) then
-    compareDistances(analizeTable^.distance, distance)
+    compareDistances(analizeTable, distance)
   else
-    addItemToAnalizeTable(analizeTable, trigram, distance);    
+    addItemToAnalizeTable(analizeTable, trigram, distance);
 end;
 
-function greatestCommonDisvisiorExists(const savedDistance, distance : integer) : boolean; inline;
+function greatestCommonDisvisionExists(const savedDistance, distance : integer) : boolean; inline;
 begin
   Result := (greatestCommonDivisor(savedDistance, distance) >= 2);
 end;
 
-procedure compareDistances(item : PTStatisticTable; const  savedDistance, distance : integer); inline;
+procedure compareDistances(item : PTStatisticTable; const distance : integer); inline;
 begin
-  if distance < savedDistance then
+  if distance < item.distance then
     item^.distance := distance;
 end;
 
-procedure CompareSubstrings(const encipheredText : string);
+procedure compareSubstrings(const encipheredText : string);
 var
   i, j, stringLength : integer;
   analizeTable : PTStatisticTable;
 begin
   stringLength := length(encipheredText);
-  analizeTable := createAnalizeTable;
+  analizeTable := createStatisticTable;
 
   for i := 1 to (stringLength - SUBSTRING_LENGTH + 1) do
     for j := i + 3 to stringLength do
-      if stringsAreEqual(encipheredText, i, j, SUBSTRING_LENGTH)
+      if stringsAreEqual(encipheredText, i, j)
       then saveSubstringToAnalizeTable(analizeTable, copy(encipheredText, i, SUBSTRING_LENGTH), j - i);
 end;
 
-function stringsAreEqual(var encipheredText : string; const i, j, SUBSTRING_LENGTH : integer) : boolean;
+function stringsAreEqual(const encipheredText : string; const i, j : integer) : boolean; overload;
 var
   k : integer;
   flag : boolean;
@@ -106,15 +109,34 @@ begin
 
   while (k < SUBSTRING_LENGTH - 1) and (flag) do
   begin
-    flag := (encipheredText[i + k] - encipheredText[j + k]) xor
-            (encipheredText[i + k + 1] - encipheredText[j + k + 1]) = 0;
+    flag := ((ord(encipheredText[i + k]) - ord(encipheredText[j + k])) xor
+            ( ord(encipheredText[i + k + 1]) - ord(encipheredText[j + k + 1]))) = 0;
+    inc(k);
+  end;
+
+  setProgressiveKeyStepShift(ord(encipheredText[i]) - ord(encipheredText[j]));
+  Result := flag;
+end;
+
+function stringsAreEqual(trigram1, trigram2 : string) : boolean; overload;
+var
+  k : integer;
+  flag : boolean;
+begin
+  flag := true;
+  k := 0;
+
+  while (k < SUBSTRING_LENGTH - 1) and (flag) do
+  begin
+    flag := ((ord(trigram1[k]) - ord(trigram1[k])) xor
+            ( ord(trigram1[k + 1]) - ord(trigram1[k + 1]))) = 0;
     inc(k);
   end;
 
   Result := flag;
 end;
 
-procedure saveStatisticToFile(var statisticTable : PTStatisticTable; const trigram : string[3]; ditance : integer);
+procedure saveStatisticToFile(var statisticTable : PTStatisticTable);
 var
   F : file of TStatisticTable;
   tempItem : TStatisticTable;
@@ -135,26 +157,38 @@ begin
   end;
 end;
 
-{
-procedure checkSubString(const enchipheredText : string; const staticLeft, scanLeft, subStringSize : integer);
-var
-  gcd : integer;
-  trigram : string;
-begin
-  gcd := greatestCommonDivisor(staticLeft, scanLeft);
-  trigram := Copy(enchipheredText, staticLeft, scanLeft - staticLeft + 1);
-  if gcd >= 3 then SaveResults(trigram, staticLeft, scanLeft, gcd);
-  //здесь мог бы быть ваш частотный анализ;
-end;
-
-procedure saveResults()
-}
-
 function greatestCommonDivisor(a, b : integer) : integer;
 begin
   if a = b then Result := a
   else if (a > b) then Result := greatestCommonDivisor(a - b, b)
   else Result := greatestCommonDivisor(a, b - a);
+end;
+
+procedure setProgressiveKeyStepShift(const keyStepShift : byte); inline;
+begin
+  if progressiveKey and ((keyStepShift < progressiveKeyStepShift) or (progressiveKeyStepShift = 0))
+  then progressiveKeyStepShift := keyStepShift;
+end;
+
+function getProgressiveKeyStepShift : integer; inline;
+begin
+  Result := progressiveKeyStepShift;
+end;
+
+procedure keyIsProgressive(); inline;
+begin
+  progressiveKey := true;
+end;
+
+procedure KeyIsStatic(); inline;
+begin
+  progressiveKey := true;
+end;
+
+procedure frequencyAnalysis(const encipheredText : string);
+begin
+  compareSubstrings(encipheredText);
+  saveStatisticToFile(statisticTable);
 end;
 
 end.
