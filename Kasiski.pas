@@ -6,7 +6,7 @@ const
    PROGRESSIVE_KEY = TRUE;
    STATIC_KEY = FALSE;
 
-procedure frequencyAnalysis(const encipheredText : string; const key : boolean);
+procedure KasiskiMethod(const encipheredText : string; const key : boolean);
 
 implementation
 
@@ -25,6 +25,8 @@ type
       next : PTStatisticTable;
    end;
 
+   TCipherTextTable = array of array of char;
+
 var
    progressiveKeyStepShift : byte;
    progressiveKey : boolean;
@@ -38,6 +40,7 @@ procedure compareDistances(item : PTStatisticTable; const distance : integer); i
 procedure addItemToAnalizeTable(analizeTable : PTStatisticTable; const trigram : string;
                                 const distance : integer); forward;
 procedure setProgressiveKeyStepShift(const keyStepShift : byte); inline; forward;
+procedure sortArrays(var countArray : array of integer; var charArray : array of char; const arraySize : integer); forward;
 
 
 function createStatisticTable : PTStatisticTable;
@@ -213,13 +216,93 @@ begin
 end;    }
 
 
-procedure frequencyAnalysis(const encipheredText : string; const key : boolean);
+procedure kasiskiMethod(const encipheredText : string; const key : boolean);
 begin
    setKeyType(key);
    compareSubstrings(encipheredText);
    saveStatisticToFile(statisticTable);
    //getResult;
 end;
+
+
+function chooseGreatCommonDivisior(const statisticTable : PTStatisticTable) : integer;
+begin
+   Result := 0;
+end;
+
+
+procedure fillDCipherTextTable(const encipheredText : string; const gcd : integer);
+var
+   textLength, rowCount, i, j, k : integer;
+   cipherTable : TCipherTextTable;
+begin
+   textLength := length(encipheredText);
+   rowCount := textLength div gcd + 1;
+   setLength(cipherTable, gcd);
+   k := 1;
+
+   for i := 1 to gcd do
+      setLength(cipherTable[i], rowCount);
+
+   for i := 1 to gcd do
+      for j := 1 to rowCount do
+      begin
+        cipherTable[i, j] := encipheredText[k];
+        inc(k);
+      end;
+end;
+
+
+procedure frequencyAnalysis(const cipherTable : TCipherTextTable; const columnCount, rowCount : integer);
+var
+   i, j : integer;
+   frequencyArray : array of char;
+begin
+   setLength(frequencyArray[columnCount]);
+
+   for i := 1 to columnCount do
+      frequencyArray[i] := getLetter(cipsherTable[i]);
+
+end;
+
+
+function getLetter(const cipherColumn : array of char; const columnSize : integer) : char;
+var
+   charArray : array of char;
+   countArray : array of integer;
+   i, j : integer;
+begin
+   setLength(charArray, columnSize);
+   setLength(countArray, columnSize);
+
+   for i := 1 to columnSize do
+   begin
+      charArray[i] := cipherColumn[i];
+      countArray[i] := 0;
+      for j := 1 to columnSize do
+         if charArray[i] = cipherColumn[j] then
+            inc(countArray[i]);
+   end;
+
+   sortArrays(countArray, charArray);
+end;
+
+
+procedure sortArrays(var countArray : array of integer; var charArray : array of char; const arraySize : integer);
+var
+   i, j, flag : integer;
+begin
+   flag := arraySize;
+   for i := 1 to flag - 1 do
+      for j := i + 1 to arraySize do
+         if countArray[i] > countArray[j] then
+         begin
+            swap(countArray[i], countArray[j]);
+            swap(charArray[i], charArray[j]);
+            flag := j;
+         end;
+end;
+
 
 
 end.
