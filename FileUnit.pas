@@ -2,20 +2,21 @@ unit FileUnit;
 
 interface
 
-procedure saveTextToFile(const fileName, sourceText : string);
+procedure saveTextToFile(const fileName : string; const sourceText : string);
+function loadTextFromFile(const fileName : string) : string;
 
 implementation
 
 uses
    System.SysUtils;
 
-procedure saveTextToFile(const fileName, sourceText : string);
+procedure saveTextToFile(const fileName : string; const sourceText : string);
 var
    T : Text;
 begin
    AssignFile(T, fileName);
    rewrite(T);
-   write(T, sourceText);
+   writeln(T, sourceText);
    closeFile(T);
 end;
 
@@ -31,7 +32,7 @@ begin
    begin
       reset(T);
       while not Eof(T) do
-         read(T, buffer);
+         readln(T, buffer);
       CloseFile(T);
    end;
    Result := buffer;

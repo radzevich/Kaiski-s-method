@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Unit1;
 
 type
-  TForm2 = class(TForm)
+  TKeyCheckForm = class(TForm)
     InorderRBtn: TRadioButton;
     ProgressiveRBtn: TRadioButton;
     SelfGeneratedRBtn: TRadioButton;
@@ -32,7 +32,7 @@ type
   end;
 
 var
-  Form2: TForm2;
+  KeyCheckForm: TKeyCheckForm;
 
 
 implementation
@@ -42,50 +42,49 @@ implementation
 Uses
   Enchipher, StringProcessing, Results;
 
-procedure TForm2.CancelBtnClick(Sender: TObject);
+procedure TKeyCheckForm.CancelBtnClick(Sender: TObject);
 begin
-  Unit1.Form1.Visible := true;
-  Form2.Visible := false;
+  Unit1.LanguageForm.Visible := true;
+  KeyCheckForm.Visible := false;
 end;
 
-procedure TForm2.CloseBtnClick(Sender: TObject);
+procedure TKeyCheckForm.CloseBtnClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TForm2.InorderRBtnClick(Sender: TObject);
+procedure TKeyCheckForm.InorderRBtnClick(Sender: TObject);
 begin
   KeyEdt.Enabled := true;
 end;
 
-procedure TForm2.NextBtnClick(Sender: TObject);
+procedure TKeyCheckForm.NextBtnClick(Sender: TObject);
 begin
   if self.Caption <> '' then
   begin
-    StringProcessing.EncipherText;
-    StringProcessing.DecipherText;
+     Results.ResultsForm.visible := true;
+     self.Visible := false;
   end;
-  Results.Form3.visible := true;
 end;
 
-procedure TForm2.ProgressiveRBtnClick(Sender: TObject);
+procedure TKeyCheckForm.ProgressiveRBtnClick(Sender: TObject);
 begin
   KeyEdt.Enabled := true;
 end;
 
-procedure TForm2.SelfGeneratedRBtnClick(Sender: TObject);
+procedure TKeyCheckForm.SelfGeneratedRBtnClick(Sender: TObject);
 begin
   KeyEdt.Enabled := false;
-  Form2.KeyEdt.Text := Form2.GenerateKey;
+  KeyCheckForm.KeyEdt.Text := KeyCheckForm.GenerateKey;
 end;
 
-function TForm2.GenerateKey : string;
+function TKeyCheckForm.GenerateKey : string;
 var
   size, i, low, high : integer;
   key : string;
 begin
   Randomize;
-  if Form1.GetLanguage = english then
+  if LanguageForm.GetLanguage = english then
   begin
     size := random(23) + 3;
     SetLength(key, size);
@@ -102,14 +101,14 @@ begin
   Result := key;
 end;
 
-function TForm2.GetKey : string;
+function TKeyCheckForm.GetKey : string;
 begin
-  key := Form2.KeyEdt.Text;
+  key := KeyCheckForm.KeyEdt.Text;
   Result := key;
-  if ProgressiveRBtn.Checked then Form2.ProgresKey(key);
+  if ProgressiveRBtn.Checked then KeyCheckForm.ProgresKey(key);
 end;
 
-procedure TForm2.ProgresKey(var key: string);
+procedure TKeyCheckForm.ProgresKey(var key: string);
 var
   i : integer;
 begin

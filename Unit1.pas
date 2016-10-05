@@ -6,8 +6,12 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
 
+const
+   ENGLISH_ALPHABET_SHIFT = 65;
+   RUSSIAN_ALPHABET_SHIFT = 128;
+
 type
-  TForm1 = class(TForm)
+  TLanguageForm = class(TForm)
     EnglishBtn: TRadioButton;
     RussianBtn: TRadioButton;
     LanguageCheckLbl: TLabel;
@@ -29,67 +33,78 @@ type
   end;
 
 var
-  Form1: TForm1;
+  LanguageForm: TLanguageForm;
 
 
 implementation
 
 {$R *.dfm}
 Uses
-  KeyCheck;
+  KeyCheck, Results;
 
-procedure TForm1.CloseBtnClick(Sender: TObject);
+procedure TLanguageForm.CloseBtnClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TForm1.EnglishBtnClick(Sender: TObject);
+procedure TLanguageForm.EnglishBtnClick(Sender: TObject);
 begin
-  Form1.LanguageCheckLbl.Caption := 'Choose your language';
-  Form1.CloseBtn.Caption := 'Close';
-  Form1.Nextbtn.Caption := 'Next';
-  KeyCheck.Form2.KeyCheckLbl.Caption := 'Choose a key';
-  KeyCheck.Form2.InorderRBtn.Caption := 'Inorder';
-  KeyCheck.Form2.ProgressiveRBtn.Caption := 'Progressive';
-  KeyCheck.Form2.SelfGeneratedRBtn.Caption := 'Self-generated';
-  KeyCheck.Form2.CancelBtn.Caption := 'Cancel';
-  KeyCheck.Form2.NextBtn.Caption := 'Cipher';
-  KeyCheck.Form2.CloseBtn.Caption := 'Close';
+  LanguageForm.LanguageCheckLbl.Caption := 'Choose your language';
+  LanguageForm.CloseBtn.Caption := 'Close';
+  LanguageForm.Nextbtn.Caption := 'Next';
+  KeyCheck.KeyCheckForm.KeyCheckLbl.Caption := 'Choose a key';
+  KeyCheck.KeyCheckForm.InorderRBtn.Caption := 'Inorder';
+  KeyCheck.KeyCheckForm.ProgressiveRBtn.Caption := 'Progressive';
+  KeyCheck.KeyCheckForm.SelfGeneratedRBtn.Caption := 'Self-generated';
+  KeyCheck.KeyCheckForm.CancelBtn.Caption := 'Cancel';
+  KeyCheck.KeyCheckForm.NextBtn.Caption := 'Cipher';
+  KeyCheck.KeyCheckForm.CloseBtn.Caption := 'Close';
+  Results.ResultsForm.EncipheredLbl.Caption := 'Enciphered text';
+  Results.ResultsForm.DecipheredLbl.Caption := 'Deciphered text';
+  Results.ResultsForm.EncipherButton.Caption := 'Encipher';
+  Results.ResultsForm.DecipherButton.Caption := 'Decipher';
+  Results.ResultsForm.ClearButton.Caption := 'Clear';
   language := english;
 end;
 
-procedure TForm1.FormCreate(Sender: TObject);
+procedure TLanguageForm.FormCreate(Sender: TObject);
 begin
   language := english;
 end;
 
-procedure TForm1.NextbtnClick(Sender: TObject);
+procedure TLanguageForm.NextbtnClick(Sender: TObject);
 begin
-  Form1.Visible := false;
-  KeyCheck.Form2.Visible := true;
+  LanguageForm.Visible := false;
+  KeyCheck.KeyCheckForm.Visible := true;
 end;
 
-procedure TForm1.RussianBtnClick(Sender: TObject);
+procedure TLanguageForm.RussianBtnClick(Sender: TObject);
 begin
   LanguageCheckLbl.Caption := 'Выберите язык';
-  Form1.CloseBtn.Caption := 'Закрыть';
-  Form1.Nextbtn.Caption := 'Далее';
-  KeyCheck.Form2.KeyCheckLbl.Caption := 'Выберите ключ';
-  KeyCheck.Form2.InorderRBtn.Caption := 'Прямой';
-  KeyCheck.Form2.ProgressiveRBtn.Caption := 'Прогрессивный';
-  KeyCheck.Form2.SelfGeneratedRBtn.Caption := 'Самогенерирующийся';
-  KeyCheck.Form2.CancelBtn.Caption := 'Назад';
-  KeyCheck.Form2.NextBtn.Caption := 'Шифровать';
-  KeyCheck.Form2.CloseBtn.Caption := 'Закрыть';
-  language := english;
+  LanguageForm.CloseBtn.Caption := 'Закрыть';
+  LanguageForm.Nextbtn.Caption := 'Далее';
+  KeyCheck.KeyCheckForm.KeyCheckLbl.Caption := 'Выберите ключ';
+  KeyCheck.KeyCheckForm.InorderRBtn.Caption := 'Прямой';
+  KeyCheck.KeyCheckForm.ProgressiveRBtn.Caption := 'Прогрессивный';
+  KeyCheck.KeyCheckForm.SelfGeneratedRBtn.Caption := 'Самогенерирующийся';
+  KeyCheck.KeyCheckForm.CancelBtn.Caption := 'Назад';
+  KeyCheck.KeyCheckForm.NextBtn.Caption := 'Шифровать';
+  KeyCheck.KeyCheckForm.CloseBtn.Caption := 'Закрыть';
+  Results.ResultsForm.SourceLbl.Caption := 'Исходный текст';
+  Results.ResultsForm.EncipheredLbl.Caption := 'Шифротекст';
+  Results.ResultsForm.DecipheredLbl.Caption := 'Расшифровка';
+  Results.ResultsForm.EncipherButton.Caption := 'Шифровать';
+  Results.ResultsForm.DecipherButton.Caption := 'Дешифровать';
+  Results.ResultsForm.ClearButton.Caption := 'Очистить';
+  language := russian;
 end;
 
-function TForm1.GetLanguage : TLanguage;
+function TLanguageForm.GetLanguage : TLanguage;
 begin
   Result := self.language;
 end;
 
-procedure TForm1.SetLanguage(const languageIsEnglish : Boolean);
+procedure TLanguageForm.SetLanguage(const languageIsEnglish : Boolean);
 begin
   if languageIsEnglish then self.language := english
   else self.language := russian;

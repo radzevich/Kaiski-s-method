@@ -1,7 +1,7 @@
-object Form2: TForm2
+object KeyCheckForm: TKeyCheckForm
   Left = 0
   Top = 0
-  Caption = 'Form2'
+  Caption = 'Visioneer cipher'
   ClientHeight = 175
   ClientWidth = 505
   Color = clBtnFace

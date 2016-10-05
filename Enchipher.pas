@@ -5,6 +5,8 @@ interface
 const
   ENGLISH_ALPHABET : array[0..25] of char = ('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P' ,'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
   RUSSIAN_ALPHABET : array[0..32] of char = ('А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я');
+  CIPHER = TRUE;
+  DECIPHER = FALSE;
 
 type
   TAlphabet = array of char;
@@ -15,7 +17,11 @@ procedure Analize(var enchipheredText : string);
 implementation
 
 Uses
-  StringProcessing, System.SysUtils;
+  StringProcessing, System.SysUtils, Unit1;
+
+const
+   ENGLISH_ALPHABET_SGIFT = 65;
+   RUSSIAN_ALPHABET_SHIFT = 128;
 
 type
   TStatisticItem = array[1..2] of integer;
@@ -83,23 +89,36 @@ procedure AddDataToStatisticTable(var buffer : TGCDTempStat); forward;
 procedure SortStatisticTable; forward;
 procedure SaveStatisticToFile; forward;
 function Evklid(a, b : integer) : integer; forward;
+function getShift : integer; forward;
 
 function GetEnchipheredText(const alphabet : TAlphabet; sourceText, key : string; needChipher : boolean) : string;
 var
   resultText : string;
-  i : integer;
+  i, alphabetSize : integer;
 begin
   SetLength(resultText, Length(sourceText));
+  alphabetSize := StringProcessing.getAlphabetSize;
   //ветквь кодировки
   if needChipher then
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[(ord(sourceText[i]) + ord(key[i mod Length(key)]) - 129) mod 26]
+      resultText[i] := alphabet[(ord(sourceText[i]) + ord(key[i mod Length(key)]) -
+                       2 * getShift) mod alphabetSize]
   //ветвь декодировки
   else
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[abs(ord(sourceText[i]) - ord(key[i mod Length(key)]) + 155) mod 26];
+      resultText[i] := alphabet[abs(ord(sourceText[i]) - ord(key[i mod Length(key)]) +
+                       2 * getShift + alphabetSize) mod alphabetSize];
 
   Result := resultText;
+end;
+
+
+function getShift : integer;
+begin
+   if Unit1.LanguageForm.GetLanguage = english then
+      Result := ENGLISH_ALPHABET_SHIFT
+   else
+      Result := RUSSIAN_ALPHABET_SHIFT;
 end;
 
 procedure Kasiski(const enchipheredText : string);

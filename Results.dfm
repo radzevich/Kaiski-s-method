@@ -1,7 +1,7 @@
-object Form3: TForm3
+object ResultsForm: TResultsForm
   Left = 0
   Top = 0
-  Caption = 'Form3'
+  Caption = 'Visioneer cipher'
   ClientHeight = 621
   ClientWidth = 892
   Color = clBtnFace
@@ -17,7 +17,7 @@ object Form3: TForm3
     Left = 360
     Top = 8
     Width = 69
-    Height = 27
+    Height = 19
     Caption = 'Source text'
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
@@ -29,8 +29,8 @@ object Form3: TForm3
   object EncipheredLbl: TLabel
     Left = 351
     Top = 207
-    Width = 105
-    Height = 31
+    Width = 94
+    Height = 19
     Caption = 'EncipheredText'
     Font.Charset = RUSSIAN_CHARSET
     Font.Color = clWindowText
@@ -107,6 +107,7 @@ object Form3: TForm3
     Font.Style = []
     ParentFont = False
     TabOrder = 3
+    OnClick = EncipherButtonClick
   end
   object DecipherButton: TButton
     Left = 763
@@ -121,6 +122,7 @@ object Form3: TForm3
     Font.Style = []
     ParentFont = False
     TabOrder = 4
+    OnClick = DecipherButtonClick
   end
   object ClearButton: TButton
     Left = 763

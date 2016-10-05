@@ -1,7 +1,7 @@
-object Form1: TForm1
+object LanguageForm: TLanguageForm
   Left = 0
   Top = 0
-  Caption = 'Form1'
+  Caption = 'Visioneer cipher'
   ClientHeight = 135
   ClientWidth = 255
   Color = clBtnFace
