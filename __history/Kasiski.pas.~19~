@@ -16,9 +16,6 @@ uses
 const
    SUBSTRING_LENGTH = 3;
    STATISTIC_FILE_NAME = 'statistic.kas';
-   CHECK_LETTER = 'E';
-   ALPHABET_SHIFT = 65;
-   ALPHABET_SIZE = 26;
 
 type
    PTStatisticTable = ^TStatisticTable;
@@ -54,7 +51,6 @@ procedure sortArrays(var countArray : array of integer; var charArray : array of
 procedure swap(var num1, num2 : integer); overload; forward;
 procedure swap(var char1, char2 : char); overload; forward;
 procedure CleanAnalizeTable(statisticTable : PTStatisticTable); forward;
-procedure frequencyAnalysis(const cipherTable : TCipherTextTable; const columnCount, rowCount : integer); forward;
 
 
 
@@ -252,9 +248,9 @@ procedure printTable(const cipherTable : TCipherTextTable; const gcd, rowCount :
 var
    i, j : integer;
 begin
-   for i := 0 to rowCount - 1 do
+   for i := 1 to rowCount do
    begin
-      for j := 0 to gcd - 1 do
+      for j := 1 to gcd do
          write(cipherTable[j, i],' ');
       writeln;
    end;
@@ -271,30 +267,17 @@ begin
    setLength(cipherTable, gcd);
    k := 1;
 
-   for i := 0 to gcd - 1 do
+   for i := 1 to gcd do
       setLength(cipherTable[i], rowCount);
 
-   for i := 0 to gcd - 1 do
-      for j := 0 to rowCount - 1 do
+   for i := 1 to gcd do
+      for j := 1 to rowCount do
       begin
         cipherTable[i, j] := encipheredText[k];
         inc(k);
       end;
 
    printTable(cipherTable, gcd, rowCount);
-   frequencyAnalysis(cipherTable, gcd, rowCount);
-end;
-
-
-function findKey(const frequencyArray : array of char; const keyLength : integer) : string;
-var
-   i : integer;
-   key : string;
-begin
-   setLength(key, keyLength);
-   for i := 1 to keyLength do
-      key[i] := chr((ord(frequencyArray[i]) - ord(CHECK_LETTER)+ ALPHABET_SIZE) mod ALPHABET_SIZE + ALPHABET_SHIFT);
-   Result := key;
 end;
 
 
@@ -302,16 +285,12 @@ procedure frequencyAnalysis(const cipherTable : TCipherTextTable; const columnCo
 var
    i, j : integer;
    frequencyArray : array of char;
-   key : string;
 begin
    setLength(frequencyArray, columnCount);
 
-   for i := 0 to columnCount - 1 do
+   for i := 1 to columnCount do
       frequencyArray[i] := getMostFrequentLetter(cipherTable[i], rowCount);
 
-   key := findKey(frequencyArray, columnCount);
-   writeln(key);
-   Readln;
 end;
 
 
@@ -324,19 +303,16 @@ begin
    setLength(charArray, columnSize);
    setLength(countArray, columnSize);
 
-   for i := 0 to columnSize - 1 do
+   for i := 1 to columnSize do
    begin
+      charArray[i] := cipherColumn[i];
       countArray[i] := 0;
-      for j := i + 1 to columnSize - 1 do
-         if cipherColumn[i] = cipherColumn[j] then
-         begin
-            charArray[i] := cipherColumn[i];
+      for j := 1 to columnSize do
+         if charArray[i] = cipherColumn[j] then
             inc(countArray[i]);
-         end;
    end;
 
    sortArrays(countArray, charArray, columnSize);
-   Result := charArray[0];
 end;
 
 
@@ -345,9 +321,9 @@ var
    i, j, flag : integer;
 begin
    flag := arraySize;
-   for i := 0 to arraySize - 2 do
+   for i := 1 to arraySize - 1 do
       for j := i + 1 to flag do
-         if countArray[i] < countArray[j] then
+         if countArray[i] > countArray[j] then
          begin
             swap(countArray[i], countArray[j]);
             swap(charArray[i], charArray[j]);
@@ -363,7 +339,7 @@ begin
    flag := arraySize;
    for i := 1 to arraySize - 1 do
       for j := i + 1 to flag do
-         if countArray[i] < countArray[j] then
+         if countArray[i] > countArray[j] then
          begin
             swap(countArray[i], countArray[j]);
             swap(gcdArray[i], gcdArray[j]);
@@ -463,8 +439,9 @@ begin
    compareSubstrings(statisticTable, encipheredText);
    saveStatisticToFile(statisticTable);
    gcd := getGreatCommonDivisior(statisticTable);
-   fillCipherTextTable(encipheredText, gcd);
-   //getResult;
+
+   //fillCipherTextTable(encipheredText, gcd);
+   getResult;
    Writeln(#13, #10, gcd);
 end;
 
@@ -526,7 +503,7 @@ begin
       sum := 0;
       for j := 0 to row - 1 do
          if gcdTable[j, i] then inc(sum);
-      if 1.3 * sum > maxGCD then
+      if 1.353 * sum > maxGCD then
       begin
         maxGCD := sum;
         gcd := i;

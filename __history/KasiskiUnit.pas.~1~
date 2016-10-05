@@ -1,0 +1,62 @@
+unit KasiskiU;
+
+interface
+
+implementation
+
+procedure Kasiski(const enchipheredText : string);
+var
+  i : integer;
+begin
+  for i := 3 to GetAlphabetSize do
+    FindSubString(enchipheredText, i);
+end;
+
+procedure FindSubString(const enchipheredText : string; subStringSize : integer);
+var
+  staticLeft, staticRight, scanLeft, scanRight, i, dif, len : integer;
+  flag : boolean;
+begin
+  staticLeft := 0;
+  staticRight := staticLeft + subStringSize - 1;
+  scanLeft := staticRight + 1;
+  scanRight := scanLeft + subStringsize - 1;
+  len := Length(enchipheredText);
+  flag := true;
+
+  while scanRight <= len - 1 do
+  begin
+    i := 1;
+    for i := 1 to subStringSize - 1 do
+      if (ord(enchipheredText[staticLeft]) - ord(enchipheredText[scanLeft]) <>
+      ord(enchipheredText[staticLeft + i]) - ord(enchipheredText[scanLeft + i])) then
+      begin
+        flag := false;
+        break;
+      end;
+
+    if flag then CheckSubString(enchipheredText, staticLeft, scanLeft, subStringSize);
+    inc(scanLeft);
+    inc(scanRight);
+  end;
+end;
+
+procedure CheckSubString(const enchipheredText : string; const staticLeft, scanLeft, subStringSize : integer);
+var
+  gcd : integer;
+  target : string;
+begin
+  gcd := Evklid(staticLeft, scanLeft);
+  target := Copy(enchipheredText, staticLeft, scanLeft - staticLeft + 1);
+  if gcd >= 3 then SaveResults(target, staticLeft, scanLeft, gcd);
+  //Analize(enchipheredText);
+end;
+
+function Evklid(a, b : integer) : integer;
+begin
+  if a = b then Result := a
+  else if (a > b) then Result := Evklid(a - b, b)
+  else Result := Evklid(a, b - a);
+end;
+
+end.
