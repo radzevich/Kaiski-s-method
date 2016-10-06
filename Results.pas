@@ -21,9 +21,11 @@ type
     EncipherButton: TButton;
     DecipherButton: TButton;
     ClearButton: TButton;
+    KasiskiButton: TButton;
     procedure ClearButtonClick(Sender: TObject);
     procedure EncipherButtonClick(Sender: TObject);
     procedure DecipherButtonClick(Sender: TObject);
+    procedure KasiskiButtonClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -38,7 +40,7 @@ implementation
 {$R *.dfm}
 
 uses
-   FileUnit, StringProcessing;
+   FileUnit, StringProcessing, KasiskiGUI;
 
 
 procedure TResultsForm.ClearButtonClick(Sender: TObject);
@@ -89,6 +91,12 @@ var
 begin
    initializeSourceText(sourceText);
    if sourceText <> '' then encipherText(sourceText);
+end;
+
+procedure TResultsForm.KasiskiButtonClick(Sender: TObject);
+begin
+   KasiskiGUI.KasiskiGUIForm.Visible := true;
+   KasiskiGUIForm.StatisticButtonClick(Sender)
 end;
 
 end.

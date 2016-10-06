@@ -37,50 +37,6 @@ type
   end;
 var
   statisticTable : array of TStatisticItem;
-{//процедура создания кодировочной таблицы
-procedure CreateCipherTable(const key : string);
-
-begin
-  SetLength(cipherTable, Length(key));
-  FillCipherTable(cipherTable, key);
-end;
-
-//процедура заполнения колировочной таблицы
-procedure FillCipherTable(var cipherTable : TCipherTable; const key : string);
-var
-  i : integer;
-begin
-  for i := 0 to Length(key) do
-    FillCipherString(cipherTable[i], key[i]);
-end;
-
-//процедура заполнения строки кодировочной таблицы
-procedure FillCipherString(var cipherString; const symbol : char);
-var
-  alphabet : array of char;
-  position, i, alphabetShift : integer;
-begin
-  if StringProcessing.languageIsEnglish then
-  begin
-    alphabet := ENGLISH_ALPHABET;
-    alphabetShift := 65
-
-  end else
-  begin
-    alphabet := RUSSIAN_ALPHABET;
-    alphabetShift := 128;
-  end;
-
-  position := ord(symbol) - alphabetShift;
-
-  for i := position to StringProcessing.alphabetSize - 1 do
-    cipherString[i - position] := alphabet[i];
-
-  for i := 0 to ord(symbol) - 1 do
-    cipherString[StringProcessing.alphabetSize - position - 1] := alphabet[i];
-end;   }
-
-//функция возвращает закодированный/декодированный текст
 
 procedure FindSubString(const enchipheredText : string; subStringSize : integer); forward;
 procedure CheckSubString(const enchipheredText : string; const staticLeft, scanLeft, subStringSize : integer); forward;
@@ -95,20 +51,21 @@ function getShift : integer; forward;
 function GetEnchipheredText(const alphabet : TAlphabet; sourceText, key : string; needChipher : boolean) : string;
 var
   resultText : string;
-  i, alphabetSize : integer;
+  i, alphabetSize, keyLength : integer;
 begin
   SetLength(resultText, Length(sourceText));
   alphabetSize := StringProcessing.getAlphabetSize;
+  keyLength := Length(key);
   //ветквь кодировки
   if needChipher then
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[(ordExt(sourceText[i]) + ordExt(key[i mod Length(key) + 1]) -
-                       2 * getShift) mod alphabetSize]
+      resultText[i] := alphabet[(ordExt(sourceText[i]) + ordExt(key[i mod keyLength + 1]) -
+                       2 * getShift + ((i - 1) div keyLength)) mod alphabetSize]
   //ветвь декодировки
   else
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[abs(ordExt(sourceText[i]) - ordExt(key[i mod Length(key) + 1]) +
-                                alphabetSize) mod alphabetSize];
+      resultText[i] := alphabet[abs(ordExt(sourceText[i]) - ordExt(key[i mod keyLength + 1]) +
+                                alphabetSize - ((i - 1) div keyLength)) mod alphabetSize];
 
   Result := resultText;
 end;

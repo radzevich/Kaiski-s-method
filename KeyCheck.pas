@@ -60,10 +60,11 @@ end;
 
 procedure TKeyCheckForm.NextBtnClick(Sender: TObject);
 begin
-  if self.Caption <> '' then
+  if KeyCheckForm.KeyEdt.Text <> '' then
   begin
      Results.ResultsForm.visible := true;
      self.Visible := false;
+
   end;
 end;
 

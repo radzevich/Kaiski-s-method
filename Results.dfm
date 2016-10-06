@@ -139,4 +139,19 @@ object ResultsForm: TResultsForm
     TabOrder = 5
     OnClick = ClearButtonClick
   end
+  object KasiskiButton: TButton
+    Left = 763
+    Top = 552
+    Width = 121
+    Height = 41
+    Caption = 'Kasiski'
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Times New Roman'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 6
+    OnClick = KasiskiButtonClick
+  end
 end

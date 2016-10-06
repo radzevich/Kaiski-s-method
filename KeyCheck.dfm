@@ -60,7 +60,7 @@ object KeyCheckForm: TKeyCheckForm
   end
   object SelfGeneratedRBtn: TRadioButton
     Left = 176
-    Top = 43
+    Top = 41
     Width = 170
     Height = 31
     Caption = 'Self-generated'

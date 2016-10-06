@@ -285,7 +285,7 @@ begin
         inc(k);
       end;
 
-   printTable(cipherTable, gcd, rowCount);
+   //printTable(cipherTable, gcd, rowCount);
    frequencyAnalysis(cipherTable, gcd, rowCount);
 end;
 
@@ -314,7 +314,7 @@ begin
       frequencyArray[i] := getMostFrequentLetter(cipherTable[i], rowCount);
 
    key := findKey(frequencyArray, columnCount);
-   writeln(key);
+   //writeln(key);
    Readln;
 end;
 
