@@ -7,13 +7,14 @@ Uses
 
 const
   ENGLISH_ALPHABET_SIZE = 26;
-  RUSSIAN_ALPHABET_SIZE = 32;
+  RUSSIAN_ALPHABET_SIZE = 33;
 
 var
   alphabetSize : integer;
 
 function GetAlphabetSize : integer;
 function DecipherText(const fileName : string) : string;
+function ordExt(const symb : char) : integer;
 procedure EncipherText(var sourceText : string; const outputFileName : string);
 
 
@@ -78,11 +79,54 @@ var
 begin
   ConvertStringToUpperCase(sourceText);
   RemoveUnexpectedSymbols(sourceText);
+  RemoveUnexpectedSymbols(sourceText);
   alphabet := GetAlphaBet;
   FileUnit.saveTextToFile(outputFileName, GetEnchipheredText(alphabet, sourceText, KeyCheck.KeyCheckForm.GetKey, true));
   encipheredText := FileUnit.loadTextFromFile(outputFileName);
   Enchipher.Analize(encipheredText);
 end;
+
+
+function ordExt(const symb : char) : integer;
+begin
+   if symb <= 'Z' then Result := ord(symb)
+   else case (symb) of
+      'À' : Result := 128;
+      'Á' : Result := 129;
+      'Â' : Result := 130;
+      'Ã' : Result := 131;
+      'Ä' : Result := 132;
+      'Å' : Result := 133;
+      '¨' : Result := 134;
+      'Æ' : Result := 135;
+      'Ç' : Result := 136;
+      'È' : Result := 137;
+      'É' : Result := 138;
+      'Ê' : Result := 139;
+      'Ë' : Result := 140;
+      'Ì' : Result := 141;
+      'Í' : Result := 142;
+      'Î' : Result := 143;
+      'Ï' : Result := 144;
+      'Ð' : Result := 145;
+      'Ñ' : Result := 146;
+      'Ò' : Result := 147;
+      'Ó' : Result := 148;
+      'Ô' : Result := 149;
+      'Õ' : Result := 150;
+      'Ö' : Result := 151;
+      '×' : Result := 152;
+      'Ø' : Result := 153;
+      'Ù' : Result := 154;
+      'Ú' : Result := 155;
+      'Û' : Result := 156;
+      'Ü' : Result := 157;
+      'Ý' : Result := 158;
+      'Þ' : Result := 159;
+      'ß' : Result := 160;
+   end;
+end;
+
 
 function DecipherText(const fileName : string) : string;
 var

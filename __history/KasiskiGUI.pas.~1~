@@ -1,0 +1,46 @@
+unit KasiskiGUI;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
+type
+  TKasiskiGUIForm = class(TForm)
+    Memo1: TMemo;
+    Button1: TButton;
+    Button2: TButton;
+    procedure Button1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  KasiskiGUIForm: TKasiskiGUIForm;
+
+implementation
+
+{$R *.dfm}
+
+uses
+   Kasiski, FileUnit, Results;
+
+procedure TKasiskiGUIForm.Button1Click(Sender: TObject);
+var
+   s : string;
+   i : integer;
+begin
+   Kasiski.KasiskiMethod(FileUnit.loadTextFromFile(ENCIPHERED_TEXT_FILE_NAME), STATIC_KEY);
+   i := 1;
+   while Kasiski.statisticTable^.next <> nil do
+   begin
+      s := statisticTable^.trigram + '  ' + intToStr(statisticTable^.distance);
+      KasiskiGUIForm.Memo1.Lines[i] := s;
+      inc(i);
+   end;
+end;
+
+end.

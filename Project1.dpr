@@ -7,15 +7,18 @@ uses
   KeyCheck in 'KeyCheck.pas' {Form2},
   Unit1 in 'Unit1.pas' {Form1},
   Results in 'Results.pas' {Form3},
-  FileUnit in 'FileUnit.pas';
+  FileUnit in 'FileUnit.pas',
+  Kasiski in 'Kasiski.pas',
+  KasiskiGUI in 'KasiskiGUI.pas' {KasiskiGUIForm};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TForm2, Form2);
-  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TLanguageForm, LanguageForm);
+  Application.CreateForm(TKeyCheckForm, KeyCheckForm);
+  Application.CreateForm(TResultsForm, ResultsForm);
+  Application.CreateForm(TKasiskiGUIForm, KasiskiGUIForm);
   Application.Run;
 end.

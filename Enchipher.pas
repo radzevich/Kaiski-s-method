@@ -91,6 +91,7 @@ procedure SaveStatisticToFile; forward;
 function Evklid(a, b : integer) : integer; forward;
 function getShift : integer; forward;
 
+
 function GetEnchipheredText(const alphabet : TAlphabet; sourceText, key : string; needChipher : boolean) : string;
 var
   resultText : string;
@@ -101,13 +102,13 @@ begin
   //ветквь кодировки
   if needChipher then
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[(ord(sourceText[i]) + ord(key[i mod Length(key)]) -
+      resultText[i] := alphabet[(ordExt(sourceText[i]) + ordExt(key[i mod Length(key) + 1]) -
                        2 * getShift) mod alphabetSize]
   //ветвь декодировки
   else
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[abs(ord(sourceText[i]) - ord(key[i mod Length(key)]) +
-                       2 * getShift + alphabetSize) mod alphabetSize];
+      resultText[i] := alphabet[abs(ordExt(sourceText[i]) - ordExt(key[i mod Length(key) + 1]) +
+                                alphabetSize) mod alphabetSize];
 
   Result := resultText;
 end;

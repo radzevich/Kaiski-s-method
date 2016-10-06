@@ -6,6 +6,18 @@ const
    PROGRESSIVE_KEY = TRUE;
    STATIC_KEY = FALSE;
 
+type
+   PTStatisticTable = ^TStatisticTable;
+   TStatisticTable = record
+      trigram : string[3];
+      distance : integer;
+      left : integer;
+      next : PTStatisticTable;
+   end;
+
+var
+   statisticTable : PTStatisticTable;
+
 procedure KasiskiMethod(const encipheredText : string; const key : boolean);
 
 implementation
@@ -21,21 +33,13 @@ const
    ALPHABET_SIZE = 26;
 
 type
-   PTStatisticTable = ^TStatisticTable;
-   TStatisticTable = record
-      trigram : string[3];
-      distance : integer;
-      left : integer;
-      next : PTStatisticTable;
-   end;
-
    TCipherTextTable = array of array of char;
    TGCDTable = array of array of boolean;
 
 var
    progressiveKeyStepShift : byte;
    progressiveKey : boolean;
-   statisticTable : PTStatisticTable;
+
 
 function stringsAreEqual(const encipheredText : string; const i, j : integer) : boolean; overload; forward;
 function stringsAreEqual(trigram1, trigram2 : string) : boolean; overload; forward;
@@ -465,7 +469,7 @@ begin
    gcd := getGreatCommonDivisior(statisticTable);
    fillCipherTextTable(encipheredText, gcd);
    //getResult;
-   Writeln(#13, #10, gcd);
+   //Writeln(#13, #10, gcd);
 end;
 
 

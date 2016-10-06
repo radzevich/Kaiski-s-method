@@ -6,6 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
 
+const
+   SOURCE_FILE_NAME = 'E:\Универ\2 course\IT\Лабы\лаба 1_Виженер\kasiski\Win32\Debug\sourceText.txt';
+   ENCIPHERED_TEXT_FILE_NAME = 'output.txt';
+
 type
   TResultsForm = class(TForm)
     SourceMemo: TMemo;
@@ -35,10 +39,6 @@ implementation
 
 uses
    FileUnit, StringProcessing;
-
-const
-   SOURCE_FILE_NAME = 'E:\Универ\2 course\IT\Лабы\лаба 1_Виженер\kasiski\Win32\Debug\sourceText.txt';
-   ENCIPHERED_TEXT_FILE_NAME = 'output.txt';
 
 
 procedure TResultsForm.ClearButtonClick(Sender: TObject);
