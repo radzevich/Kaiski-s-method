@@ -86,7 +86,7 @@ begin
   KeyCheck.KeyCheckForm.KeyCheckLbl.Caption := 'Выберите ключ';
   KeyCheck.KeyCheckForm.InorderRBtn.Caption := 'Прямой';
   KeyCheck.KeyCheckForm.ProgressiveRBtn.Caption := 'Прогрессивный';
-  KeyCheck.KeyCheckForm.SelfGeneratedRBtn.Caption := 'Самогенерирующийся';
+  KeyCheck.KeyCheckForm.SelfGeneratedRBtn.Caption := 'Самогенер-ся';
   KeyCheck.KeyCheckForm.CancelBtn.Caption := 'Назад';
   KeyCheck.KeyCheckForm.NextBtn.Caption := 'Шифровать';
   KeyCheck.KeyCheckForm.CloseBtn.Caption := 'Закрыть';

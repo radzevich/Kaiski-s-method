@@ -8,6 +8,8 @@ Uses
 const
   ENGLISH_ALPHABET_SIZE = 26;
   RUSSIAN_ALPHABET_SIZE = 33;
+  ENGLISH_ALPHABET_SHIFT = 65;
+  RUSSIAN_ALPHABET_SHIFT = 128;
 
 var
   alphabetSize : integer;
@@ -78,7 +80,6 @@ var
 begin
   ConvertStringToUpperCase(sourceText);
   RemoveUnexpectedSymbols(sourceText);
-  RemoveUnexpectedSymbols(sourceText);
   alphabet := GetAlphaBet;
   FileUnit.saveTextToFile(outputFileName, GetEnchipheredText(alphabet, sourceText, KeyCheck.KeyCheckForm.GetKey, true));
   encipheredText := FileUnit.loadTextFromFile(outputFileName);
@@ -124,6 +125,56 @@ begin
       'Þ' : Result := 159;
       'ß' : Result := 160;
    end;
+end;
+
+
+function chrExt(const num : integer) : char;
+begin
+   if num <= ENGLISH_ALPHABET_SIZE + ENGLISH_ALPHABET_SHIFT then Result := ord(num)
+   else case (num) of
+      128 : Result := 'À';
+      129 : Result := 'Á';
+      130 : Result := 'Â';
+      131 : Result := 'Ã';
+      132 : Result := 'Ä';
+      133 : Result := 'Å';
+      134 : Result := '¨';
+      135 : Result := 'Æ';
+      136 : Result := 'Ç';
+      137 : Result := 'È';
+      138 : Result := 'É';
+      139 : Result := 'Ê';
+      140 : Result := 'Ë';
+      141 : Result := 'Ì';
+      142 : Result := 'Í';
+      143 : Result := 'Î';
+      144 : Result := 'Ï';
+      145 : Result := 'Ð';
+      146 : Result := 'Ñ';
+      147 : Result := 'Ò';
+      148 : Result := 'Ó';
+      149 : Result := 'Ô';
+      150 : Result := 'Õ';
+      151 : Result := 'Ö';
+      152 : Result := '×';
+      153 : Result := 'Ø';
+      154 : Result := 'Ù';
+      155 : Result := 'Ú';
+      156 : Result := 'Û';
+      157 : Result := 'Ü';
+      158 : Result := 'Ý';
+      159 : Result := 'Þ';
+      160 : Result := 'ß';
+   end;
+end;
+
+
+function getNextSymbol(const symb : char; const step : integer) : char;
+begin
+  if languageForm.GetLanguage = english then
+    result := chr(ord(symb) + step)
+  else
+    result := chrExt(ordExt(symb) + 1);
 end;
 
 

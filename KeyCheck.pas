@@ -42,6 +42,9 @@ implementation
 Uses
   Enchipher, StringProcessing, Results;
 
+const
+  PROGRESSIVE_KEY_STEP = 1;
+
 procedure TKeyCheckForm.CancelBtnClick(Sender: TObject);
 begin
   Unit1.LanguageForm.Visible := true;
@@ -105,16 +108,19 @@ end;
 function TKeyCheckForm.GetKey : string;
 begin
   key := KeyCheckForm.KeyEdt.Text;
+  StringProcessing.RemoveUnexpectedSymbols(key);
+  StringProcessing.ConvertStringToUpperCase(key);
   Result := key;
   if ProgressiveRBtn.Checked then KeyCheckForm.ProgresKey(key);
 end;
 
 procedure TKeyCheckForm.ProgresKey(var key: string);
 var
-  i : integer;
+  i, keyLen : integer;
 begin
- //// for i := 0 to Length(key) - 1 do
-   // key[i] := ord()
+  keyLen := length(key);
+  for i := 1 to keyLen do
+
 end;
 
 end.
