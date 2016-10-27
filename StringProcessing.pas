@@ -16,15 +16,14 @@ function GetAlphabetSize : integer;
 function DecipherText(const fileName : string) : string;
 function ordExt(const symb : char) : integer;
 procedure EncipherText(var sourceText : string; const outputFileName : string);
-
+procedure ConvertStringToUpperCase(var sourceText : string);
+procedure RemoveUnexpectedSymbols(var sourceText : string);
 
 implementation
 
 Uses
   Enchipher, KeyCheck, FileUnit;
 
-procedure ConvertStringToUpperCase(var sourceText : string); forward;
-procedure RemoveUnexpectedSymbols(var sourceText : string); forward;
 procedure ConvertSymbolToUpperCase(var symbol : char); forward;
 procedure SaveEncipheredText(fileName, encipheredText : string); forward;
 function UnexpectedSymbol(const symbol : char) : boolean; forward;
@@ -174,9 +173,12 @@ begin
   i := 1;
   while i <= len do
   begin
-    if UnexpectedSymbol(sourceText[i + shiftCount]) then inc(shiftCount);
+    while UnexpectedSymbol(sourceText[i + shiftCount]) and (i <= len) do
+    begin
+      inc(shiftCount);
+      dec(len);
+    end;
     sourceText[i] := sourceText[i + shiftCount];
-    len := Length(sourceText) - shiftCount;
     inc(i);
   end;
 
