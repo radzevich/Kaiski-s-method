@@ -24,18 +24,22 @@ end;
 function loadTextFromFile(const fileName : string) : string;
 var
    T : text;
-   buffer : string;
+   buffer, resultString : string;
 begin
    buffer := '';
    AssignFile(T, fileName);
+   resultString := '';
    if fileExists(fileName) then
    begin
       reset(T);
       while not Eof(T) do
+      begin
          readln(T, buffer);
+         resultString := resultString + buffer + ' ';
+      end;
       CloseFile(T);
    end;
-   Result := buffer;
+   Result := resultString;
 end;
 
 

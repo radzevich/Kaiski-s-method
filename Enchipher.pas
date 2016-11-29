@@ -17,7 +17,7 @@ procedure Analize(var enchipheredText : string);
 implementation
 
 Uses
-  StringProcessing, System.SysUtils, Unit1;
+  StringProcessing, System.SysUtils, Unit1, KeyCheck, FileUnit, Windows;
 
 const
    ENGLISH_ALPHABET_SGIFT = 65;
@@ -52,20 +52,37 @@ function GetEnchipheredText(const alphabet : TAlphabet; sourceText, key : string
 var
   resultText : string;
   i, alphabetSize, keyLength : integer;
+  temp1, temp2 : char;
 begin
+  SetConsoleCP(1251);
+  SetConsoleOutputCP(1251);
   SetLength(resultText, Length(sourceText));
   alphabetSize := StringProcessing.getAlphabetSize;
   keyLength := Length(key);
   //ветквь кодировки
   if needChipher then
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[(ordExt(sourceText[i]) + ordExt(key[i mod keyLength + 1]) -
-                       2 * getShift + ((i - 1) div keyLength)) mod alphabetSize]
+    begin
+      temp1 := chrExt(ordExt(sourceText[i]));
+      temp2 := chrExt(ordExt(key[(i - 1) mod keyLength + 1]));
+      resultText[i] := chrExt((ordExt(sourceText[i]) + ordExt(key[(i - 1) mod keyLength + 1]) -
+                       2 * getShift + 1) mod 33 + 128);
+     { if (KeyCheck.KeyCheckForm.ProgressiveRBtn.Checked) then
+        if (i mod keyLength = 0) then
+          KeyCheck.KeyCheckForm.ProgresKey(key);    }
+    end
   //ветвь декодировки
   else
+  begin
+    key := KeyCheck._key;
     for i := 1 to Length(sourceText) do
-      resultText[i] := alphabet[abs(ordExt(sourceText[i]) - ordExt(key[i mod keyLength + 1]) +
-                                alphabetSize - ((i - 1) div keyLength)) mod alphabetSize];
+    begin
+      resultText[i] := chrExt((ordExt(sourceText[i]) - ordExt(key[(i - 1) mod keyLength + 1]) + 32) mod 33 + 128);
+      {if (KeyCheck.KeyCheckForm.ProgressiveRBtn.Checked) then
+        if (i mod keyLength = 0) then
+          KeyCheck.KeyCheckForm.ProgresKey(key);  }
+    end;
+  end;
 
   Result := resultText;
 end;

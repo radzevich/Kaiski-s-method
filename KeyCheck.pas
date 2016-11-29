@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Unit1;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Unit1, FileUnit;
 
 type
   TKeyCheckForm = class(TForm)
@@ -33,6 +33,7 @@ type
 
 var
   KeyCheckForm: TKeyCheckForm;
+  _key : string;
 
 
 implementation
@@ -67,7 +68,7 @@ begin
   begin
      Results.ResultsForm.visible := true;
      self.Visible := false;
-
+     //EncipherText(loadTextFromFile('sourceText.txt'), 'fdsgdfg');
   end;
 end;
 
@@ -111,6 +112,7 @@ begin
   StringProcessing.RemoveUnexpectedSymbols(key);
   StringProcessing.ConvertStringToUpperCase(key);
   Result := key;
+  _key := key;
   if ProgressiveRBtn.Checked then KeyCheckForm.ProgresKey(key);
 end;
 
@@ -120,7 +122,10 @@ var
 begin
   keyLen := length(key);
   for i := 1 to keyLen do
-
+    if key[i] < 'ß' then
+      key[i] := stringProcessing.chrExt(stringProcessing.ordExt(key[i]) + 1)
+    else
+      key[i] := 'À';
 end;
 
 end.

@@ -64,6 +64,9 @@ begin
   Results.ResultsForm.EncipherButton.Caption := 'Encipher';
   Results.ResultsForm.DecipherButton.Caption := 'Decipher';
   Results.ResultsForm.ClearButton.Caption := 'Clear';
+    Results.ResultsForm.KasiskiButton.Caption := 'Kasiski';
+  Results.ResultsForm.BackButton.Caption := 'Back';
+  Results.ResultsForm.CloseButton.Caption := 'Close';
   language := english;
 end;
 
@@ -96,6 +99,9 @@ begin
   Results.ResultsForm.EncipherButton.Caption := 'Шифровать';
   Results.ResultsForm.DecipherButton.Caption := 'Дешифровать';
   Results.ResultsForm.ClearButton.Caption := 'Очистить';
+  Results.ResultsForm.KasiskiButton.Caption := 'Касиски';
+  Results.ResultsForm.BackButton.Caption := 'Назад';
+  Results.ResultsForm.CloseButton.Caption := 'Закрыть';
   language := russian;
 end;
 

@@ -1,0 +1,93 @@
+unit KasiskiGUI;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+
+type
+  TKasiskiGUIForm = class(TForm)
+    StatisticMemo: TMemo;
+    BackButton: TButton;
+    StatisticButton: TButton;
+    procedure BackButtonClick(Sender: TObject);
+    procedure StatisticButtonClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  KasiskiGUIForm: TKasiskiGUIForm;
+
+implementation
+
+{$R *.dfm}
+
+uses
+   Kasiski, FileUnit, Results;
+
+function Evklid(num1, num2 : integer) : integer;
+begin
+  while (num1 <> num2) do
+    if num1 > num2 then
+      num1 := num1 - num2
+    else
+      num2 := num2 - num1;
+  Result := num1;
+end;
+
+function getGCD(const statisticTable : PTStatisticTable) : integer;
+begin
+  if (statisticTable^.next <> nil) then
+    Result := Evklid(statisticTable^.distance, statisticTable^.next^.distance)
+  else
+    Result := statisticTable^.distance;
+end;
+
+
+procedure getKasiskiStatistic;
+var
+   s : string;
+   i : integer;
+begin
+   Kasiski.KasiskiMethod(FileUnit.loadTextFromFile(ENCIPHERED_TEXT_FILE_NAME), STATIC_KEY);
+   i := 1;
+   while Kasiski.statisticTable^.next <> nil do
+   begin
+      statisticTable := statisticTable^.next;
+      s := statisticTable^.trigram + '      ' + intToStr(statisticTable^.distance) + '     ' +
+           intToStr(getGCD(statisticTable));
+      KasiskiGUIForm.StatisticMemo.Lines.Add(s);
+      inc(i);
+   end;
+end;
+
+procedure saveStatToFile(statisticTable : PTStatisticTable);
+var
+  T : Text;
+begin
+  Assign(T, 'kasiski.txt');
+  Rewrite(T);
+  while statisticTable^.next <> nil do
+  begin
+    statisticTable := statisticTable^.next;
+    writeln(T, statisticTable^.trigram, '  ', statisticTable^.left:5, statisticTable^.distance:5);
+  end;
+  closeFile(T);
+end;
+
+procedure TKasiskiGUIForm.BackButtonClick(Sender: TObject);
+begin
+   self.Visible := false;
+   self.StatisticMemo.Clear;
+end;
+
+procedure TKasiskiGUIForm.StatisticButtonClick(Sender: TObject);
+begin
+   getKasiskiStatistic;
+end;
+
+end.

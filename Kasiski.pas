@@ -12,6 +12,7 @@ type
       trigram : string[3];
       distance : integer;
       left : integer;
+      gcd : integer;
       next : PTStatisticTable;
    end;
 
@@ -19,11 +20,12 @@ var
    statisticTable : PTStatisticTable;
 
 procedure KasiskiMethod(const encipheredText : string; const key : boolean);
+function getGreatCommonDivisior(statisticTable : PTStatisticTable) : integer;
 
 implementation
 
 uses
-   System.SysUtils;
+   System.SysUtils, StringProcessing;
 
 const
    SUBSTRING_LENGTH = 3;
@@ -47,10 +49,9 @@ function greatestCommonDivisor(a, b : integer) : integer; inline; forward;
 function greatestCommonDisvisionExists(const savedDistance, distance : integer) : boolean; inline; forward;
 function getMostFrequentLetter(const cipherColumn : array of char; const columnSize : integer) : char; forward;
 function chooseGCD(var gcdTable : TGCDTable; const row, column : integer) : integer; forward;
-function getGreatCommonDivisior(statisticTable : PTStatisticTable) : integer; forward;
 procedure compareDistances(item : PTStatisticTable; const distance : integer); inline; forward;
 procedure addItemToAnalizeTable(statisticTable : PTStatisticTable; const trigram : string;
-                                const distance : integer); forward;
+                                const left, distance : integer); forward;
 procedure fillGCDTable(var gcdTable : TGCDTable; statisticTable : PTStatisticTable;
                        const rowCount, columnCount : integer); forward;
 procedure setProgressiveKeyStepShift(const keyStepShift : byte); inline; forward;
@@ -71,13 +72,14 @@ end;
 
 
 procedure addItemToAnalizeTable(statisticTable : PTStatisticTable; const trigram : string;
-                                const distance : integer);
+                                const left, distance : integer);
 begin
    while statisticTable^.next <> nil do
       statisticTable := statisticTable^.next;
    new(statisticTable^.next);
    statisticTable^.next^.trigram := trigram;
    statisticTable^.next^.distance := distance;
+   statisticTable^.next^.left := left;
    statisticTable^.next^.next := nil;
 end;
 
@@ -89,7 +91,7 @@ var
 begin
    equal := false;
 
-   while ((statisticTable^.next <> nil) and not equal) do
+   while (statisticTable^.next <> nil) do
    begin
       if stringsAreEqual(statisticTable^.next^.trigram, trigram) then
       begin
@@ -100,7 +102,7 @@ begin
    end;
 
    if not (equal and greatestCommonDisvisionExists(statisticTable^.next^.distance, distance)) then
-      addItemToAnalizeTable(statisticTable, trigram, distance);
+      addItemToAnalizeTable(statisticTable, trigram, left, distance);
 end;
 
 
@@ -161,12 +163,12 @@ begin
 
    while (k < SUBSTRING_LENGTH - 1) and (flag) do
    begin
-      flag := ((ord(encipheredText[i + k]) - ord(encipheredText[j + k])) xor
-              ( ord(encipheredText[i + k + 1]) - ord(encipheredText[j + k + 1]))) = 0;
+      flag := ((ordExt(encipheredText[i + k]) - ordExt(encipheredText[j + k])) xor
+              ( ordExt(encipheredText[i + k + 1]) - ordExt(encipheredText[j + k + 1]))) = 0;
       inc(k);
    end;
 
-   setProgressiveKeyStepShift(ord(encipheredText[i]) - ord(encipheredText[j]));
+   setProgressiveKeyStepShift(ordExt(encipheredText[i]) - ordExt(encipheredText[j]));
    Result := flag;
 end;
 
@@ -181,8 +183,8 @@ begin
 
    while (k < SUBSTRING_LENGTH - 1) and (flag) do
    begin
-      flag := ((ord(trigram1[k]) - ord(trigram1[k])) xor
-              ( ord(trigram1[k + 1]) - ord(trigram1[k + 1]))) = 0;
+      flag := ((ordExt(trigram1[k]) - ordExt(trigram1[k])) xor
+              ( ordExt(trigram1[k + 1]) - ordExt(trigram1[k + 1]))) = 0;
       inc(k);
    end;
 
@@ -286,7 +288,7 @@ begin
       end;
 
    //printTable(cipherTable, gcd, rowCount);
-   frequencyAnalysis(cipherTable, gcd, rowCount);
+   //frequencyAnalysis(cipherTable, gcd, rowCount);
 end;
 
 
@@ -432,8 +434,8 @@ begin
    Result := counter;
 end;
 
- {
-function getGreatCommonDivisior(statisticTable : PTStatisticTable) : integer;
+
+{function getGreatCommonDivisior(statisticTable : PTStatisticTable) : integer;
 var
    gcdArray, countArray : array of integer;
    i, j, statisticTableSize : integer;
@@ -456,8 +458,8 @@ begin
    sortArrays(countArray, gcdArray, statisticTableSize);
    sortHighestGCD(gcdArray, countArray, statisticTableSize);
    Result := gcdArray[1];
-end;
-            }
+end;        }
+
 
 procedure kasiskiMethod(const encipheredText : string; const key : boolean);
 var
@@ -467,7 +469,7 @@ begin
    compareSubstrings(statisticTable, encipheredText);
    saveStatisticToFile(statisticTable);
    gcd := getGreatCommonDivisior(statisticTable);
-   fillCipherTextTable(encipheredText, gcd);
+   //fillCipherTextTable(encipheredText, gcd);
    //getResult;
    //Writeln(#13, #10, gcd);
 end;
@@ -530,7 +532,7 @@ begin
       sum := 0;
       for j := 0 to row - 1 do
          if gcdTable[j, i] then inc(sum);
-      if 1.3 * sum > maxGCD then
+      if sum > maxGCD then
       begin
         maxGCD := sum;
         gcd := i;
